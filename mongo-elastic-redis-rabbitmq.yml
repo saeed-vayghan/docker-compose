@@ -1,0 +1,67 @@
+version: '3'
+
+services:
+  mongodb:
+    container_name: 'mongodb'
+    image: 'mongo'
+    restart: 'always'
+    volumes:
+      - './mongodb/dump:/data/db-dump'
+      - './mongodb/db:/data/db'
+    ports:
+      - '27017:27017'
+
+  mongo-express:
+    container_name: 'mongoexpress'
+    image: 'mongo-express'
+    restart: 'always'
+    ports:
+      - '8081:8081'
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: ''
+      ME_CONFIG_BASICAUTH_PASSWORD: ''
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: 'true'
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ''
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ''
+      ME_CONFIG_MONGODB_SERVER: 'mongodb'
+      ME_CONFIG_MONGODB_PORT: '27017'
+    depends_on:
+      - 'mongodb'
+
+  redis:
+    container_name: 'redis'
+    image: 'redis'
+    volumes:
+      - './redis:/var/lib/redis'
+    ports:
+      - '6379:6379'
+
+  # sysctl -w vm.max_map_count=262144
+  elasticsearch:
+    container_name: 'elasticsearch'
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:6.2.4'
+    environment:
+      - 'node.name=es01'
+      - 'bootstrap.memory_lock=true'
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+    ulimits:
+      nproc: '65535'
+      memlock:
+        soft: '-1'
+        hard: '-1'
+    volumes:
+      - './elasticsearch/data:/usr/share/elasticsearch/data'
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+
+  rabbitmq:
+    container_name: 'rabbitmq'
+    image: 'rabbitmq:3-management'
+    environment:
+      RABBITMQ_DEFAULT_USER: 'guest'
+      RABBITMQ_DEFAULT_PASS: 'guest'
+      RABBITMQ_DEFAULT_VHOST: '/'
+    ports:
+      - '15672:15672'
+      - '5672:5672'
