@@ -2,8 +2,8 @@ version: '3'
 
 services:
   postgres:
-    container_name: 'postgres'
-    image: 'postgres'
+    container_name: 'postgres-v10-rechat-server'
+    image: 'mdillon/postgis:10'
     environment:
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'changeme'
