@@ -2,7 +2,7 @@ version: '3'
 
 services:
   postgres:
-    container_name: 'postgres-v10-rechat-server'
+    container_name: 'postgres-v10-server'
     image: 'mdillon/postgis:10'
     environment:
       POSTGRES_USER: 'postgres'
