@@ -2,8 +2,8 @@ version: '3'
 
 services:
   postgres:
-    container_name: 'postgres-v10-server'
-    image: 'mdillon/postgis:10'
+    container_name: 'postgres-v11-rechat-server'
+    image: 'mdillon/postgis:11'
     environment:
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'changeme'
@@ -14,11 +14,11 @@ services:
       - '5432:5432'
     networks:
       - 'postgres'
-    restart: 'always'
+    restart: 'on-failure'
 
   
   pgadmin:
-    container_name: 'pgadmin'
+    container_name: 'pgadmin-rechat-server'
     image: 'dpage/pgadmin4'
     environment:
       PGADMIN_DEFAULT_EMAIL: 'pgadmin4@pgadmin.org'
@@ -29,11 +29,11 @@ services:
       - '5050:80'
     networks:
       - 'postgres'
-    restart: 'always'
+    restart: 'on-failure'
 
 
   redis:
-    container_name: 'redis'
+    container_name: 'redis-rechat-server'
     image: 'redis'
     volumes:
       - './redis:/var/lib/redis'
@@ -42,7 +42,7 @@ services:
 
 
   rabbitmq:
-    container_name: 'rabbitmq'
+    container_name: 'rabbitmq-rechat-server'
     image: 'rabbitmq:3-management'
     environment:
       RABBITMQ_DEFAULT_USER: 'guest'
@@ -51,27 +51,6 @@ services:
     ports:
       - '15672:15672'
       - '5672:5672'
-
-
-  # sysctl -w vm.max_map_count=262144
-  elasticsearch:
-    container_name: 'elasticsearch'
-    image: 'docker.elastic.co/elasticsearch/elasticsearch:6.2.4'
-    environment:
-      - 'node.name=es01'
-      - 'bootstrap.memory_lock=true'
-      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
-    ulimits:
-      nproc: '65535'
-      memlock:
-        soft: '-1'
-        hard: '-1'
-    volumes:
-      - './elasticsearch/data:/usr/share/elasticsearch/data'
-    ports:
-      - '9200:9200'
-      - '9300:9300'
-
 
 
 networks:
